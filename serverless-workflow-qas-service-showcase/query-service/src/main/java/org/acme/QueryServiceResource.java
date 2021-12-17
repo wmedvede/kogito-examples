@@ -18,10 +18,12 @@ package org.acme;
 
 import java.net.URI;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -51,6 +53,11 @@ public class QueryServiceResource {
         String processInstanceId;
         String query;
 
+        public QueryRequest(String processInstanceId, String query) {
+            this.processInstanceId = processInstanceId;
+            this.query = query;
+        }
+
         public String getProcessInstanceId() {
             return processInstanceId;
         }
@@ -61,16 +68,25 @@ public class QueryServiceResource {
     }
 
     @Inject
+    QueryRequestRepository repository;
+
+    @Inject
     @Channel(RESPONSE_EVENTS)
     Emitter<String> eventsEmitter;
 
     @Inject
     ObjectMapper objectMapper;
 
+    @GET
+    public List<QueryRequest> get() {
+        return repository.find();
+    }
+
     @Path("sendQuery")
     @POST
     public Response sendQuery(QueryRequest request) {
         LOGGER.debug("Query received, processInstanceId: {}, query: {}", request.getProcessInstanceId(), request.getQuery());
+        repository.save(request);
         //return an empty json as a minimum since the RestWorkItemHandler expects a non-null response.
         return Response.ok().entity("{}").build();
     }
@@ -82,6 +98,7 @@ public class QueryServiceResource {
         String event = generateCloudEvent(processInstanceId, queryResponse);
         LOGGER.debug("Resolving query, event to send is: {}", event);
         eventsEmitter.send(event);
+        repository.delete(processInstanceId);
         return Response.ok().build();
     }
 

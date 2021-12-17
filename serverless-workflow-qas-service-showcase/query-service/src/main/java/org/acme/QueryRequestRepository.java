@@ -13,17 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.acme;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public interface QueryRecordRepository {
+import javax.enterprise.context.ApplicationScoped;
 
-    void save(QueryRecord queryRecord);
+@ApplicationScoped
+public class QueryRequestRepository {
 
-    QueryRecord get(String id);
+    private final Map<String, QueryServiceResource.QueryRequest> queryRequests = new ConcurrentHashMap<>();
 
-    List<QueryRecord> find();
+    public List<QueryServiceResource.QueryRequest> find() {
+        return new ArrayList<>(queryRequests.values());
+    }
 
+    public void save(QueryServiceResource.QueryRequest queryRequest) {
+        queryRequests.put(queryRequest.getProcessInstanceId(), queryRequest);
+    }
+
+    public void delete(String id) {
+        queryRequests.remove(id);
+    }
 }

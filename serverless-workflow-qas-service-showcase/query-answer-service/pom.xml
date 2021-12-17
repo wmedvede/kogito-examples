@@ -81,18 +81,6 @@
       <artifactId>quarkus-smallrye-reactive-messaging-kafka</artifactId>
     </dependency>
 
-    <!-- Persistence settings -->
-        <dependency>
-          <groupId>org.kie.kogito</groupId>
-          <artifactId>kogito-addons-quarkus-persistence-postgresql</artifactId>
-          <version>${kogito.version}</version>
-        </dependency>
-
-        <dependency>
-          <groupId>io.quarkus</groupId>
-          <artifactId>quarkus-reactive-pg-client</artifactId>
-        </dependency>
-
     <!-- Testing dependencies -->
     <dependency>
       <groupId>io.quarkus</groupId>
@@ -176,5 +164,29 @@
         <quarkus.package.type>native</quarkus.package.type>
       </properties>
     </profile>
+     <profile>
+        <id>postgresql</id>
+        <activation>
+          <property>
+            <name>postgresql</name>
+          </property>
+        </activation>
+        <properties>
+          <quarkus.profile>postgresql</quarkus.profile>
+          <skipTests>true</skipTests>
+        </properties>
+        <dependencies>
+          <!-- PostgreSQL Persistence settings -->
+            <dependency>
+              <groupId>org.kie.kogito</groupId>
+              <artifactId>kogito-addons-quarkus-persistence-postgresql</artifactId>
+              <version>${kogito.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>io.quarkus</groupId>
+              <artifactId>quarkus-reactive-pg-client</artifactId>
+            </dependency>
+        </dependencies>
+      </profile>
   </profiles>
 </project>
