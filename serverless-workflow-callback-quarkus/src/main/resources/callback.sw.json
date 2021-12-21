@@ -32,7 +32,7 @@
     {
       "name": "waitForEvent",
       "type": "callback",
-      "action": 
+      "action":
         {
           "name": "publishAction",
           "functionRef": {
@@ -40,6 +40,13 @@
             }
         },
         "eventRef" : "moveEvent",
+      "onErrors": [
+        {
+          "error": "execution error",
+          "code": "java.util.concurrent.CompletionException",
+          "end": "true"
+        }
+      ],
       "transition": "finish"
     },
     {
