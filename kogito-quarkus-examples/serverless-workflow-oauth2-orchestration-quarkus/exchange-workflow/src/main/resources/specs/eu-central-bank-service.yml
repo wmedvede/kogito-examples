@@ -1,0 +1,53 @@
+---
+openapi: 3.0.3
+info:
+  title: European Central Bank API
+  version: 1.0.1
+paths:
+  /central-bank/reference-rates:
+    get:
+      tags:
+        - EU Central Bank Resource
+      operationId: referenceRates
+      parameters:
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReferenceRates'
+      security:
+        - eu-central-bank-oauth: []
+components:
+  schemas:
+    ReferenceRate:
+      type: object
+      properties:
+        date:
+          format: date
+          type: string
+        currency:
+          type: string
+        rate:
+          format: float
+          type: number
+    ReferenceRates:
+      type: object
+      properties:
+        rates:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReferenceRate'
+  securitySchemes:
+    eu-central-bank-oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          authorizationUrl: https://example.com/oauth
+          tokenUrl: https://example.com/oauth/token
+          scopes: {}
