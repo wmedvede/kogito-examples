@@ -1,0 +1,146 @@
+{
+  "id": "currency_exchange_workflow",
+  "version": "1.0",
+  "name": "Currency Exchange SW",
+  "description": "",
+  "start": "ChooseOnCurrency",
+  "errors": [
+    {
+      "name": "execution_error",
+      "code": "java.lang.Exception"
+    }
+  ],
+  "functions": [
+    {
+      "name": "getEUCentralBankReferenceRates",
+      "type": "rest",
+      "operation": "specs/eu-central-bank-service.yml#referenceRates"
+    },
+    {
+      "name": "getAcmeExchange",
+      "type": "rest",
+      "operation": "specs/acme-financial-service.yml#currencyExchange"
+    },
+    {
+      "name": "calculateExchange",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::calculateExchange"
+    }
+  ],
+  "states": [
+    {
+      "name": "ChooseOnCurrency",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "${.currencyFrom == \"EUR\" or .currencyTo == \"EUR\"}",
+          "transition": "TryWithEuCentralBank"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "TryWithAcme"
+      }
+    },
+    {
+      "name": "TryWithEuCentralBank",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getEUCentralBankReferenceRatesAction",
+          "functionRef": {
+            "refName": "getEUCentralBankReferenceRates",
+            "arguments": {
+              "date": ".exchangeDate"
+            }
+          }
+        },
+        {
+          "name": "calculateExchangeAction",
+          "functionRef": {
+            "refName": "calculateExchange",
+            "arguments": {
+              "currencyFrom": ".currencyFrom",
+              "currencyTo": ".currencyTo",
+              "amount": ".amount",
+              "rates": ".rates",
+              "workflowData": "."
+            }
+          },
+          "actionDataFilter": {
+            "results": ".value",
+            "toStateData": ".result"
+          }
+        }
+      ],
+      "transition": "CheckEuCentralBankResult",
+      "onErrors": [
+        {
+          "errorRef": "execution_error",
+          "transition": "EndWithEUCentralBankError"
+        }
+      ]
+    },
+    {
+      "name": "CheckEuCentralBankResult",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": ".result == null",
+          "transition": "TryWithAcme"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "EndSuccessful"
+      }
+    },
+    {
+      "name": "TryWithAcme",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getAcmeExchangeAction",
+          "functionRef": {
+            "refName": "getAcmeExchange",
+            "arguments": {
+              "currencyFrom": ".currencyFrom",
+              "currencyTo": ".currencyTo",
+              "exchangeDate": ".exchangeDate",
+              "amount": ".amount"
+            }
+          }
+        }
+      ],
+      "transition": "EndSuccessful",
+      "onErrors": [
+        {
+          "errorRef": "execution_error",
+          "transition": "EndWithAcmeError"
+        }
+      ]
+    },
+    {
+      "name": "EndWithEUCentralBankError",
+      "type": "inject",
+      "data": {
+        "executionStatus": "The eu-central-bank-service invocation has failed"
+      },
+      "end": true
+    },
+    {
+      "name": "EndWithAcmeError",
+      "type": "inject",
+      "data": {
+        "executionStatus": "The acme-financial-service invocation has failed"
+      },
+      "end": true
+    },
+    {
+      "name": "EndSuccessful",
+      "type": "inject",
+      "data": {
+        "executionStatus": "Service execution successful"
+      },
+      "end": true
+    }
+  ]
+}

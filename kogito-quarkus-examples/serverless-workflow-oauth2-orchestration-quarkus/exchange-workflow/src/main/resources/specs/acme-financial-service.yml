@@ -1,0 +1,44 @@
+---
+openapi: 3.0.3
+info:
+  title: acme-financial-service API
+  version: 2.0.0-SNAPSHOT
+paths:
+  /financial-service/currency-exchange:
+    get:
+      tags:
+        - Acme Financial Resource
+      operationId: currencyExchange
+      parameters:
+        - name: amount
+          in: query
+          schema:
+            format: double
+            type: number
+        - name: currencyFrom
+          in: query
+          schema:
+            type: string
+        - name: currencyTo
+          in: query
+          schema:
+            type: string
+        - name: exchangeDate
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcmeExchangeResult'
+components:
+  schemas:
+    AcmeExchangeResult:
+      type: object
+      properties:
+        result:
+          format: double
+          type: number

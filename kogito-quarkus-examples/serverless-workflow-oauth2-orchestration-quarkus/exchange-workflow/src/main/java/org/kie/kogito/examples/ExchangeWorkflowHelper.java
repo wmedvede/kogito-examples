@@ -24,17 +24,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @ApplicationScoped
-public class CalculateExchangeService {
+public class ExchangeWorkflowHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CalculateExchangeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeWorkflowHelper.class);
 
-    public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, double amount, List<JsonNode> rates) {
+    public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, double amount, List<JsonNode> rates, JsonNode workflowData) {
+        LOGGER.debug("calculateExchange exchange, currencyFrom: {}, currencyTo: {}, amount: {}, rates: {}, workflowData: {}",
+                currencyFrom, currencyTo, amount, rates, workflowData);
 
-        LOGGER.debug("Calculating exchange, currencyFrom: {}, currencyTo: {}, amount: {}, rates: {}",
-                currencyFrom, currencyTo, amount, rates);
-
+        //TODO, ver en los Rates
+        ObjectNode node = (ObjectNode) workflowData;
+        node.remove("rates");
         if (amount <= 10) {
             return new ExchangeResult(1234d);
         } else {
@@ -42,4 +45,9 @@ public class CalculateExchangeService {
         }
     }
 
+    public void cleanUpHelperFields(JsonNode workflowData) {
+        LOGGER.debug("cleanUpHelperFields");
+        ObjectNode node = (ObjectNode) workflowData;
+        node.remove("rates");
+    }
 }
