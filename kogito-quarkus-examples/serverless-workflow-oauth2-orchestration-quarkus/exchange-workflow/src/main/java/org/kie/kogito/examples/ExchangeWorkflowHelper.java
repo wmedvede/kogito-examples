@@ -45,9 +45,24 @@ public class ExchangeWorkflowHelper {
         }
     }
 
+    public ExchangeResult calculateExchange2(String currencyFrom, String currencyTo, double amount, double rate) {
+        LOGGER.debug("calculateExchange2 exchange, currencyFrom: {}, currencyTo: {}, amount: {}, rate: {}",
+                currencyFrom, currencyTo, amount, rate);
+
+        return new ExchangeResult(rate * amount);
+    }
+
     public void cleanUpHelperFields(JsonNode workflowData) {
         LOGGER.debug("cleanUpHelperFields");
         ObjectNode node = (ObjectNode) workflowData;
         node.remove("rates");
+    }
+
+    public ExchangeResult exchangeRateFromCache(String currencyFrom, String currencyTo, String exchangeDate) {
+        if ("UYP".equals(currencyFrom)) {
+            return new ExchangeResult(2d);
+        } else {
+            return new ExchangeResult(null);
+        }
     }
 }

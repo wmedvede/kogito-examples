@@ -20,6 +20,11 @@ public class AcmeExchangeResult {
 
     private double result;
 
+    private double exchangeRate;
+
+    public AcmeExchangeResult() {
+    }
+
     public AcmeExchangeResult(double result) {
         this.result = result;
     }
@@ -30,5 +35,13 @@ public class AcmeExchangeResult {
 
     public void setResult(double result) {
         this.result = result;
+    }
+
+    public double getExchangeRate() {
+        return exchangeRate;
+    }
+
+    public void setExchangeRate(double exchangeRate) {
+        this.exchangeRate = exchangeRate;
     }
 }

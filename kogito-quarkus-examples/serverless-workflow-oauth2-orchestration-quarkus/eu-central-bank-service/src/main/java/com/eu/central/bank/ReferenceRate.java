@@ -16,28 +16,20 @@
 
 package com.eu.central.bank;
 
-import java.time.LocalDate;
-
 public class ReferenceRate {
-    private LocalDate date;
     private String currency;
-    private float rate;
+    private double rate;
 
-    public ReferenceRate(LocalDate date, String currency, float rate) {
-        this.date = date;
+    public ReferenceRate(String currency, double rate) {
         this.currency = currency;
         this.rate = rate;
-    }
-
-    public LocalDate getDate() {
-        return date;
     }
 
     public String getCurrency() {
         return currency;
     }
 
-    public float getRate() {
+    public double getRate() {
         return rate;
     }
 }

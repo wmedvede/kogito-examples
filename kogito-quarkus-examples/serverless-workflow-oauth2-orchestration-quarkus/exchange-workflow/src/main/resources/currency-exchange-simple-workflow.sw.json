@@ -1,0 +1,130 @@
+{
+  "id": "currency_exchange_simple_workflow",
+  "version": "1.0",
+  "name": "Currency Simple Exchange SW",
+  "description": "",
+  "start": "GetExchangeRateFromCache",
+  "errors": [
+    {
+      "name": "execution_error",
+      "code": "java.lang.Exception"
+    }
+  ],
+  "functions": [
+    {
+      "name": "getExchangeRateFromService",
+      "type": "rest",
+      "operation": "specs/acme-financial-service.yml#exchangeRate"
+    },
+    {
+      "name": "getExchangeRateFromCache",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::exchangeRateFromCache"
+    },
+    {
+      "name": "calculateExchange",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::calculateExchange2"
+    }
+  ],
+  "states": [
+    {
+      "name": "GetExchangeRateFromCache",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getExchangeRateFromCacheAction",
+          "functionRef": {
+            "refName": "getExchangeRateFromCache",
+            "arguments": {
+              "currencyFrom": ".currencyFrom",
+              "currencyTo": ".currencyTo",
+              "exchangeDate": ".exchangeDate"
+          }
+        },
+        "actionDataFilter": {
+            "results": ".value",
+            "toStateData": ".exchangeRate"
+          }
+        }
+      ],
+      "transition": "CheckExchangeRate"
+    },
+    {
+      "name": "CheckExchangeRate",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": ".exchangeRate == null",
+          "transition": "GetExchangeRateFromService"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "CalculateExchange"
+      }
+    },
+    {
+      "name": "GetExchangeRateFromService",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getExchangeRateFromServiceAction",
+          "functionRef": {
+            "refName": "getExchangeRateFromService",
+            "arguments": {
+              "currencyFrom": ".currencyFrom",
+              "currencyTo": ".currencyTo",
+              "exchangeDate": ".exchangeDate"
+            }
+          }
+        }
+      ],
+      "transition": "CalculateExchange",
+      "onErrors": [
+        {
+          "errorRef": "execution_error",
+          "transition": "EndWithError"
+        }
+      ]
+    },
+    {
+      "name": "CalculateExchange",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "calculateExchangeAction",
+          "functionRef": {
+            "refName": "calculateExchange",
+            "arguments": {
+              "currencyFrom": ".currencyFrom",
+              "currencyTo": ".currencyTo",
+              "amount": ".amount",
+              "rate": ".exchangeRate"
+            }
+          },
+          "actionDataFilter": {
+            "results": ".value",
+            "toStateData": ".result"
+          }
+        }
+      ],
+      "transition": "EndSuccessful"
+    },
+    {
+      "name": "EndWithError",
+      "type": "inject",
+      "data": {
+        "executionStatus": "The acme-financial-service invocation has failed"
+      },
+      "end": true
+    },
+    {
+      "name": "EndSuccessful",
+      "type": "inject",
+      "data": {
+        "executionStatus": "Service execution successful"
+      },
+      "end": true
+    }
+  ]
+}

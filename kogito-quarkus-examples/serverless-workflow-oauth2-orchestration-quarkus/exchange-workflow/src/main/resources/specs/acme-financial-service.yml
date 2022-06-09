@@ -1,32 +1,32 @@
 ---
 openapi: 3.0.3
 info:
-  title: acme-financial-service API
-  version: 2.0.0-SNAPSHOT
+  title: Acme Financial Service API
+  version: 1.0.1
 paths:
   /financial-service/currency-exchange:
     get:
       tags:
-        - Acme Financial Resource
+      - Acme Financial Resource
       operationId: currencyExchange
       parameters:
-        - name: amount
-          in: query
-          schema:
-            format: double
-            type: number
-        - name: currencyFrom
-          in: query
-          schema:
-            type: string
-        - name: currencyTo
-          in: query
-          schema:
-            type: string
-        - name: exchangeDate
-          in: query
-          schema:
-            type: string
+      - name: amount
+        in: query
+        schema:
+          format: double
+          type: number
+      - name: currencyFrom
+        in: query
+        schema:
+          type: string
+      - name: currencyTo
+        in: query
+        schema:
+          type: string
+      - name: exchangeDate
+        in: query
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -34,6 +34,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AcmeExchangeResult'
+  /financial-service/exchange-rate:
+    get:
+      tags:
+      - Acme Financial Resource
+      operationId: exchangeRate
+      parameters:
+      - name: currencyFrom
+        in: query
+        schema:
+          type: string
+      - name: currencyTo
+        in: query
+        schema:
+          type: string
+      - name: exchangeDate
+        in: query
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcmeExchangeResult'
+      security:
+      - acme-financial-oauth: []
 components:
   schemas:
     AcmeExchangeResult:
@@ -42,3 +69,14 @@ components:
         result:
           format: double
           type: number
+        exchangeRate:
+          format: double
+          type: number
+  securitySchemes:
+    acme-financial-oauth:
+      type: oauth2
+      flows:
+        clientCredentials:
+          authorizationUrl: https://example.com/oauth
+          tokenUrl: https://example.com/oauth/token
+          scopes: {}
