@@ -12,7 +12,6 @@
   <name>Kogito Example :: Serverless Workflow Oauth2 Orchestration Example</name>
   <modules>
     <module>acme-financial-service</module>
-    <module>eu-central-bank-service</module>
     <module>exchange-workflow</module>
   </modules>
 </project>

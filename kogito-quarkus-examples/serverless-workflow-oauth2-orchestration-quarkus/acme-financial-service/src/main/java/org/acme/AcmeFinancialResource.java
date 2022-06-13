@@ -38,47 +38,20 @@ public class AcmeFinancialResource {
     @Inject
     SecurityIdentity identity;
 
-    @GET
-    @Path("currency-exchange")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(operationId = "currencyExchange")
-    public AcmeExchangeResult getCurrencyExchange(@QueryParam("currencyFrom") String currencyFrom,
-            @QueryParam("currencyTo") String currencyTo,
-            @QueryParam("exchangeDate") String exchangeDate,
-            @QueryParam("amount") double amount) {
-
-        System.out.println("QUIEN ES:  " + identity.getPrincipal().getName());
-        System.out.println("ATTRIBUTES:  " + identity.getAttributes());
-        System.out.println("ROLES:  " + identity.getRoles());
-        System.out.println("CREDENTIALS:  " + identity.getCredentials());
-
-        LOGGER.debug("getCurrencyExchange, currencyFrom: {}, currencyTo: {}, exchangeDate: {}, amount: {} ",
-                currencyFrom, currencyTo, exchangeDate, amount);
-
-        double result = amount * 2;
-        return new AcmeExchangeResult(result);
-    }
+    @Inject
+    ExchangeRatesDB exchangeRatesDB;
 
     @GET
     @Path("exchange-rate")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "exchangeRate")
     @SecurityRequirement(name = "acme-financial-oauth")
-
     public AcmeExchangeResult getExchangeRate(@QueryParam("currencyFrom") String currencyFrom,
             @QueryParam("currencyTo") String currencyTo,
             @QueryParam("exchangeDate") String exchangeDate) {
-
-        System.out.println("QUIEN ES:  " + identity.getPrincipal().getName());
-        System.out.println("ATTRIBUTES:  " + identity.getAttributes());
-        System.out.println("ROLES:  " + identity.getRoles());
-        System.out.println("CREDENTIALS:  " + identity.getCredentials());
-
-        LOGGER.debug("getExchangeRate, currencyFrom: {}, currencyTo: {}, exchangeDate: {}", currencyFrom, currencyTo, exchangeDate);
-        LOGGER.debug("Account: {} will be charged with 0.02 euros for accessing this service!", identity.getPrincipal().getName());
-        double result = 5;
-        AcmeExchangeResult exchangeResult = new AcmeExchangeResult();
-        exchangeResult.setExchangeRate(5);
-        return exchangeResult;
+        LOGGER.debug("getExchangeRate, accessedBy: {}, currencyFrom: {}, currencyTo: {}, exchangeDate: {}",
+                identity.getPrincipal().getName(), currencyFrom, currencyTo, exchangeDate);
+        Double exchangeRate = exchangeRatesDB.readExchangeRate(currencyFrom, currencyTo, exchangeDate);
+        return new AcmeExchangeResult(exchangeRate);
     }
 }

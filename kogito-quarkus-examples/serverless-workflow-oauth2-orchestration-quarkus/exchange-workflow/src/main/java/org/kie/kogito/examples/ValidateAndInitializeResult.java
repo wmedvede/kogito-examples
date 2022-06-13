@@ -14,24 +14,32 @@
  * limitations under the License.
  */
 
-package org.acme;
+package org.kie.kogito.examples;
 
-public class AcmeExchangeResult {
+public class ValidateAndInitializeResult {
 
-    private double exchangeRate;
+    private String executionStatus;
+    private String executionStatusMessage;
+    private Double exchangeRate;
 
-    public AcmeExchangeResult() {
+    public ValidateAndInitializeResult(String executionStatus, String executionStatusMessage) {
+        this.executionStatus = executionStatus;
+        this.executionStatusMessage = executionStatusMessage;
     }
 
-    public AcmeExchangeResult(double exchangeRate) {
+    public ValidateAndInitializeResult(Double exchangeRate) {
         this.exchangeRate = exchangeRate;
     }
 
-    public double getExchangeRate() {
+    public String getExecutionStatus() {
+        return executionStatus;
+    }
+
+    public String getExecutionStatusMessage() {
+        return executionStatusMessage;
+    }
+
+    public Double getExchangeRate() {
         return exchangeRate;
-    }
-
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
     }
 }

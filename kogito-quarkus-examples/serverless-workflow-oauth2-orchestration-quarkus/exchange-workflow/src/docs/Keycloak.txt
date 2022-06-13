@@ -1,0 +1,21 @@
+
+#### Starting and Configuring the Keycloak Server
+
+To start a Keycloak Server you can use Docker and just run the following command:
+
+docker run -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin  -e KEYCLOAK_IMPORT=/tmp/kogito-realm.json -v /home/wmedvede/development/projects/kogito/kogito-examples/kogito-quarkus-examples/serverless-workflow-oauth2-orchestration-quarkus/exchange-workflow/src/docs/kogito-realm.json:/tmp/kogito-realm.json -p 8281:8080  quay.io/keycloak/keycloak:legacy
+
+
+
+You should be able to access your Keycloak Server at
+    http://localhost:8281
+
+    and the authentication endpoint is: http://localhost:8281/auth
+
+and verify keycloak server is running properly: log in as the admin user to access the Keycloak Administration Console.
+Username should be admin and password admin.
+With the keycloak kogito realm  imported we have defined users to be able to try the different endpoints
+user:
+    john with role 'employees'
+    mary with role 'managers'
+    poul with roles 'interns and managers'

@@ -16,53 +16,82 @@
 
 package org.kie.kogito.examples;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
+/**
+ * Helper class used by the Currency Exchange Workflow.
+ */
 @ApplicationScoped
 public class ExchangeWorkflowHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeWorkflowHelper.class);
 
-    public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, double amount, List<JsonNode> rates, JsonNode workflowData) {
-        LOGGER.debug("calculateExchange exchange, currencyFrom: {}, currencyTo: {}, amount: {}, rates: {}, workflowData: {}",
-                currencyFrom, currencyTo, amount, rates, workflowData);
+    private static final Set<String> SUPPORTED_CURRENCIES = new LinkedHashSet<>(Arrays.asList("EUR", "USD", "JPY", "GBP", "CAD", "BRL", "AUD"));
 
-        //TODO, ver en los Rates
-        ObjectNode node = (ObjectNode) workflowData;
-        node.remove("rates");
-        if (amount <= 10) {
-            return new ExchangeResult(1234d);
-        } else {
-            return new ExchangeResult(null);
+    @Inject
+    ExchangeRateCache exchangeRateCache;
+
+    /**
+     * Performs the validation of the parameters received by the serverless workflow and tries to get the exchange rate
+     * from the cache to optimize and minimize the invocations to the Acme Financial Service.
+     */
+    public ValidateAndInitializeResult validateAndInitialize(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
+        LOGGER.debug("validateAndInitialize, currencyFrom: {}, currencyTo: {}, amount: {}, exchangeDate: {}",
+                     currencyFrom, currencyTo, amount, exchangeDate);
+        try {
+            validateExchangeDate(exchangeDate);
+            validateCurrency("currencyFrom", currencyFrom);
+            validateCurrency("currencyTo", currencyTo);
+        } catch (ValidationException e) {
+            return new ValidateAndInitializeResult("ERROR", e.getMessage());
+        }
+        Double exchangeRate = exchangeRateCache.getRate(currencyFrom, currencyTo, LocalDate.parse(exchangeDate));
+        if (exchangeRate != null) {
+            LOGGER.debug("Optimization!, the exchangeRate: {} was read from the cache", exchangeRate);
+        }
+        return new ValidateAndInitializeResult(exchangeRate);
+    }
+
+    public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, String exchangeDate, Double amount, Double exchangeRate) {
+        LOGGER.debug("calculateExchange, currencyFrom: {}, currencyTo: {}, exchangeDate: {}, amount: {}, exchangeRate: {}",
+                     currencyFrom, currencyTo, exchangeDate, amount, exchangeRateCache);
+        exchangeRateCache.pushRate(currencyFrom, currencyTo, LocalDate.parse(exchangeDate), exchangeRate);
+        return new ExchangeResult(amount * exchangeRate);
+    }
+
+    private static void validateExchangeDate(String exchangeDate) throws ValidationException {
+        LocalDate date;
+        try {
+            date = LocalDate.parse(exchangeDate);
+        } catch (DateTimeParseException e) {
+            throw new ValidationException("Invalid exchangeDate: " + exchangeDate + ", a value in the YYYY-MM-DD must be used");
+        }
+        LocalDate today = LocalDate.now();
+        if (date.isAfter(LocalDate.now())) {
+            throw new ValidationException("Invalid exchangeDate: " + exchangeDate + ", a value lower or equal than today: " + today + " must be used");
         }
     }
 
-    public ExchangeResult calculateExchange2(String currencyFrom, String currencyTo, double amount, double rate) {
-        LOGGER.debug("calculateExchange2 exchange, currencyFrom: {}, currencyTo: {}, amount: {}, rate: {}",
-                currencyFrom, currencyTo, amount, rate);
-
-        return new ExchangeResult(rate * amount);
+    private static void validateCurrency(String paramName, String currency) throws ValidationException {
+        if (!SUPPORTED_CURRENCIES.contains(currency)) {
+            throw new ValidationException("Invalid " + paramName + ": " + currency + ", only the following currencies are supported " + SUPPORTED_CURRENCIES);
+        }
     }
 
-    public void cleanUpHelperFields(JsonNode workflowData) {
-        LOGGER.debug("cleanUpHelperFields");
-        ObjectNode node = (ObjectNode) workflowData;
-        node.remove("rates");
-    }
+    private static class ValidationException extends Exception {
 
-    public ExchangeResult exchangeRateFromCache(String currencyFrom, String currencyTo, String exchangeDate) {
-        if ("UYP".equals(currencyFrom)) {
-            return new ExchangeResult(2d);
-        } else {
-            return new ExchangeResult(null);
+        public ValidationException(String message) {
+            super(message);
         }
     }
 }

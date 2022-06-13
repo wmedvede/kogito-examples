@@ -2,24 +2,24 @@
   "id": "currency_exchange_workflow",
   "version": "1.0",
   "name": "Currency Exchange SW",
-  "description": "",
-  "start": "ChooseOnCurrency",
+  "dataInputSchema": "currency-exchange-workflow-schema.json",
+  "start": "ValidateAndInitialize",
   "errors": [
     {
-      "name": "execution_error",
+      "name": "service_error",
       "code": "java.lang.Exception"
     }
   ],
   "functions": [
     {
-      "name": "getEUCentralBankReferenceRates",
-      "type": "rest",
-      "operation": "specs/eu-central-bank-service.yml#referenceRates"
+      "name": "validateAndInitialize",
+      "type": "custom",
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateAndInitialize"
     },
     {
-      "name": "getAcmeExchange",
+      "name": "getExchangeRateFromService",
       "type": "rest",
-      "operation": "specs/acme-financial-service.yml#currencyExchange"
+      "operation": "specs/acme-financial-service.yml#exchangeRate"
     },
     {
       "name": "calculateExchange",
@@ -29,108 +29,95 @@
   ],
   "states": [
     {
-      "name": "ChooseOnCurrency",
-      "type": "switch",
-      "dataConditions": [
-        {
-          "condition": "${.currencyFrom == \"EUR\" or .currencyTo == \"EUR\"}",
-          "transition": "TryWithEuCentralBank"
-        }
-      ],
-      "defaultCondition": {
-        "transition": "TryWithAcme"
-      }
-    },
-    {
-      "name": "TryWithEuCentralBank",
+      "name": "ValidateAndInitialize",
       "type": "operation",
       "actions": [
         {
-          "name": "getEUCentralBankReferenceRatesAction",
+          "name": "validateAndInitializeAction",
           "functionRef": {
-            "refName": "getEUCentralBankReferenceRates",
+            "refName": "validateAndInitialize",
             "arguments": {
-              "date": ".exchangeDate"
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "amount": "${ .amount }",
+              "exchangeDate": "${ .exchangeDate }"
             }
           }
+        }
+      ],
+      "transition": "CheckValidateAndInitialize"
+    },
+    {
+      "name": "CheckValidateAndInitialize",
+      "type": "switch",
+      "dataConditions": [
+        {
+          "condition": "${ .executionStatus == \"ERROR\" }",
+          "end": true
         },
+        {
+          "condition": "${ .executionStatus == null and .exchangeRate == null }",
+          "transition": "GetExchangeRateFromService"
+        }
+      ],
+      "defaultCondition": {
+        "transition": "CalculateExchange"
+      }
+    },
+    {
+      "name": "GetExchangeRateFromService",
+      "type": "operation",
+      "actions": [
+        {
+          "name": "getExchangeRateFromServiceAction",
+          "functionRef": {
+            "refName": "getExchangeRateFromService",
+            "arguments": {
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "exchangeDate": "${ .exchangeDate }"
+            }
+          }
+        }
+      ],
+      "transition": "CalculateExchange",
+      "onErrors": [
+        {
+          "errorRef": "service_error",
+          "transition": "EndWithError"
+        }
+      ]
+    },
+    {
+      "name": "CalculateExchange",
+      "type": "operation",
+      "actions": [
         {
           "name": "calculateExchangeAction",
           "functionRef": {
             "refName": "calculateExchange",
             "arguments": {
-              "currencyFrom": ".currencyFrom",
-              "currencyTo": ".currencyTo",
-              "amount": ".amount",
-              "rates": ".rates",
-              "workflowData": "."
+              "currencyFrom": "${ .currencyFrom }",
+              "currencyTo": "${ .currencyTo }",
+              "exchangeDate": "${ .exchangeDate }",
+              "amount": "${ .amount }",
+              "exchangeRate": "${ .exchangeRate }"
             }
           },
           "actionDataFilter": {
-            "results": ".value",
-            "toStateData": ".result"
+            "results": "${ .value }",
+            "toStateData": "${ .result }"
           }
         }
       ],
-      "transition": "CheckEuCentralBankResult",
-      "onErrors": [
-        {
-          "errorRef": "execution_error",
-          "transition": "EndWithEUCentralBankError"
-        }
-      ]
+      "transition": "EndSuccessful"
     },
     {
-      "name": "CheckEuCentralBankResult",
-      "type": "switch",
-      "dataConditions": [
-        {
-          "condition": ".result == null",
-          "transition": "TryWithAcme"
-        }
-      ],
-      "defaultCondition": {
-        "transition": "EndSuccessful"
-      }
-    },
-    {
-      "name": "TryWithAcme",
-      "type": "operation",
-      "actions": [
-        {
-          "name": "getAcmeExchangeAction",
-          "functionRef": {
-            "refName": "getAcmeExchange",
-            "arguments": {
-              "currencyFrom": ".currencyFrom",
-              "currencyTo": ".currencyTo",
-              "exchangeDate": ".exchangeDate",
-              "amount": ".amount"
-            }
-          }
-        }
-      ],
-      "transition": "EndSuccessful",
-      "onErrors": [
-        {
-          "errorRef": "execution_error",
-          "transition": "EndWithAcmeError"
-        }
-      ]
-    },
-    {
-      "name": "EndWithEUCentralBankError",
+      "name": "EndWithError",
       "type": "inject",
       "data": {
-        "executionStatus": "The eu-central-bank-service invocation has failed"
-      },
-      "end": true
-    },
-    {
-      "name": "EndWithAcmeError",
-      "type": "inject",
-      "data": {
-        "executionStatus": "The acme-financial-service invocation has failed"
+        "executionStatus": "ERROR",
+        "executionStatusMessage": "Execution failed: The acme-financial-service invocation has failed, check that the service is running and that you have configured the OAuth2 client properly"
       },
       "end": true
     },
@@ -138,7 +125,8 @@
       "name": "EndSuccessful",
       "type": "inject",
       "data": {
-        "executionStatus": "Service execution successful"
+        "executionStatus": "OK",
+        "executionStatusMessage": "Execution successful"
       },
       "end": true
     }
