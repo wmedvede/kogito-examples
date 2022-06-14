@@ -47,7 +47,7 @@ public class ExchangeWorkflowHelper {
      */
     public ValidateAndInitializeResult validateAndInitialize(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
         LOGGER.debug("validateAndInitialize, currencyFrom: {}, currencyTo: {}, amount: {}, exchangeDate: {}",
-                     currencyFrom, currencyTo, amount, exchangeDate);
+                currencyFrom, currencyTo, amount, exchangeDate);
         try {
             validateExchangeDate(exchangeDate);
             validateCurrency("currencyFrom", currencyFrom);
@@ -64,7 +64,7 @@ public class ExchangeWorkflowHelper {
 
     public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, String exchangeDate, Double amount, Double exchangeRate) {
         LOGGER.debug("calculateExchange, currencyFrom: {}, currencyTo: {}, exchangeDate: {}, amount: {}, exchangeRate: {}",
-                     currencyFrom, currencyTo, exchangeDate, amount, exchangeRateCache);
+                currencyFrom, currencyTo, exchangeDate, amount, exchangeRateCache);
         exchangeRateCache.pushRate(currencyFrom, currencyTo, LocalDate.parse(exchangeDate), exchangeRate);
         return new ExchangeResult(amount * exchangeRate);
     }

@@ -8,7 +8,7 @@
     <version>2.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>exchange-workflow</artifactId>
+  <artifactId>currency-exchange-workflow</artifactId>
 
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
