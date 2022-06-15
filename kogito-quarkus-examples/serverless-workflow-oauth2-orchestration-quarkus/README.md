@@ -1,25 +1,51 @@
-# Kogito Serverless Workflow - Oauth2 Orchestration Example.
+# Kogito Serverless Workflow - Oauth2 Orchestration Example
 
-This example shows how to configure a Serverless Workflow that orchestrates the interaction with an Oauth2 secured REST service.
+This example shows how to configure a Serverless Workflow that orchestrate the interaction with an Oauth2 secured REST service.
 
-Imagine that you have set of applications that needs to do currency exchange operations as part of their regular operations. 
+Imagine that you have set of applications that must resolve currency exchange calculations as part of their regular operations. 
 For that, you need an accurate source of information to get the different exchange rates.
 
-Fortunately, your company has a commercial agreement with Acme Financial Services, and those rates can be queried using their services.
+Fortunately, your company has a commercial agreement with Acme Financial Services, and those rates can be queried using their Oauth2 secured services.
+As a confidential client, you were granted with proper credentials to access their services as part of the agreement.
 
-However, you don't want to expose that services to your applications, instead you want to provide a Serverless Workflow, the `currency-exchange-workflow` that resolve:
+However, you don't want to expose that services to your applications, instead you want to provide a Serverless Workflow that resolves:
 
-* The orchestration with Acme's service and the exchange calculation
+* The orchestration with Acme's services and the currency exchange calculation
 * The authentication requirements to access that service
-* Provide a common interface to your application that won't change over the time, independently of the commercial agreement with Acme or any other future provider.
-* Optimize the interactions with the external service when it is possible
+* Provide a custom service that your applications can rely on (won't change over the time), and avoid vendor lock-in problems with Acme.
+* Optimize the interactions with the external services, implement validations, etc.
+
+## The currency-exchange-workflow
+
+The `currency-exchange-workflow` implements the requirements stated above.
+
+### Architecture
+
+In the following you can see a simplified view of the architecture of this example.
+
+![Architecture](docs/architecture-diagram.png)
+
+1. The application sends a request to calculate the currency exchange.
+2. The flow executes the necessary validations and determine if the `acme-financial-service` must be queried.
+3. Case yes, an authentication request is sent to `acme-oauth2-server` using the credentials provided by Acme.
+4. An access token is returned by the `acme-oauth2-server`.
+5. A request is sent to the `acme-financial-service` and the access token is sent as part of the call.
+6. The access token is validated.
+7. A successful validation enables the query execution, results are sent o the flow.
+8. The 'currency-exchange-workflow` receives the exchange rate, perform the calculations, and returns the result.
 
 
+> **NOTE:** The steps related with the Oauth2 server interaction might vary depending on the authorization flow. 
+However, all these interactions are transparent to the serverless workflow, and you only have to focus configuring a proper OidcClient as described in the guide. TODO and a link to the guide?  
+
+### Workflow diagram
+
+The figure below shows the `currency-exchange-workflow` diagram: 
+
+![Workflow Diagram](docs/currency-exchange-workflow-diagram.png)
 
 
-The following diagram shows the problem structure and the different interactions that occur to resolve a query.
-
-![](docs/QueryAnswerServiceDiagram.png)
+10. ![](docs/QueryAnswerServiceDiagram.png)
 
 ## Example UI
 
