@@ -10,8 +10,8 @@ As a confidential client, you were granted with proper credentials to access the
 
 However, you don't want to expose that services to your applications, instead you want to provide a Serverless Workflow that resolves:
 
-* The orchestration with Acme's services and the currency exchange calculation
-* The authentication requirements to access that service
+* The orchestration with Acme's services and the currency exchange calculation.
+* The authentication requirements to access that service.
 * Provide a custom service that your applications can rely on (won't change over the time), and avoid vendor lock-in problems with Acme.
 * Optimize the interactions with the external services, implement validations, etc.
 
@@ -35,8 +35,8 @@ In the following you can see a simplified view of the architecture of this examp
 8. The 'currency-exchange-workflow` receives the exchange rate, perform the calculations, and returns the result.
 
 
-> **NOTE:** The steps related with the Oauth2 server interaction might vary depending on the authorization flow. 
-However, all these interactions are transparent to the serverless workflow, and you only have to focus configuring a proper OidcClient as described in the guide. TODO and a link to the guide?  
+> **NOTE:** The steps related to the Oauth2 server interaction might vary depending on the authorization flow to use. 
+However, all these interactions are transparent to the serverless workflow, and you only have to configure proper OidcClient according to that flow and the target Oauth2 server. TODO, link?  
 
 ### Workflow diagram
 

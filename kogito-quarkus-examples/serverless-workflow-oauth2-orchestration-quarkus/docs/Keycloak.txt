@@ -6,6 +6,15 @@ To start a Keycloak Server you can use Docker and just run the following command
 docker run -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin  -e KEYCLOAK_IMPORT=/tmp/kogito-realm.json -v /home/wmedvede/development/projects/kogito/kogito-examples/kogito-quarkus-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow/src/docs/kogito-realm.json:/tmp/kogito-realm.json -p 8281:8080  quay.io/keycloak/keycloak:legacy
 
 
+To start a Keycloak Server you can use Docker and just run the following command:
+
+
+docker run -e KEYCLOAK_USER=admin -e KEYCLOAK_PASSWORD=admin  -e KEYCLOAK_IMPORT=/tmp/kogito-realm.json -v /home/wmedvede/development/projects/kogito/kogito-examples/kogito-quarkus-examples/serverless-workflow-oauth2-orchestration-quarkus/currency-exchange-workflow/src/docs/kogito-realm.json:/tmp/kogito-realm.json -p 8281:8080  quay.io/keycloak/keycloak:17.0.0
+
+
+docker run --name keycloak -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin -p 8180:8080 quay.io/keycloak/keycloak:{keycloak.version} start-dev
+where keycloak.version should be set to 17.0.0 or higher.
+
 
 You should be able to access your Keycloak Server at
     http://localhost:8281

@@ -1,60 +1,101 @@
-# currency-exchange-workflow Project
+# Kogito Serverless Workflow - Currency Exchange Workflow
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Description
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+This project contains a [serverless workflow](src/main/resources/currency-exchange-workflow.sw.json) and some auxiliary resources that implement the **Currency Exchange Workflow**
+described in the [servlerless-workflow-oauth2-orchestration-quarkus/README.md](../README.md). Please read it before to continue.
 
-## Running the application in dev mode
+The service is described using JSON format as defined in the
+[CNCF Serverless Workflow specification](https://github.com/serverlessworkflow/specification).
 
-You can run your application in dev mode that enables live coding using:
-```shell script
-./mvnw compile quarkus:dev
+## Infrastructure requirements
+
+### Keycloak
+
+This example requires a Keycloak server to be running, and expects it to be listening on the port XXXX and localhost.
+
+TODO
+
+* Install Keycloak
+
+Optionally and for convenience, a docker-compose [configuration file](../docker-compose/docker-compose.yml) is
+provided in the path [../docker-compose](../docker-compose), where you can just run the command from there:
+
+```sh
+docker-compose up
+```  
+
+In this way, a container for Keycloak will be started on port TODO.
+
+## Installing and Running
+
+### Prerequisites
+
+You will need:
+- Java 11+ installed
+- Environment variable JAVA_HOME set accordingly
+- Maven 3.8.1+ installed
+
+When using native image compilation, you will also need:
+- [GraalVm](https://www.graalvm.org/downloads/) 19.3.1+ installed
+- Environment variable GRAALVM_HOME set accordingly
+- Note that GraalVM native image compilation typically requires other packages (glibc-devel, zlib-devel and gcc) to be installed too.  You also need 'native-image' installed in GraalVM (using 'gu install native-image'). Please refer to [GraalVM installation documentation](https://www.graalvm.org/docs/reference-manual/aot-compilation/#prerequisites) for more details.
+
+### Compile and Run in Local Dev Mode
+
+```sh
+mvn clean package quarkus:dev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+### Compile and Run in JVM mode
 
-## Packaging and running the application
-
-The application can be packaged using:
-```shell script
-./mvnw package
-```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./mvnw package -Dquarkus.package.type=uber-jar
+```sh
+mvn clean package 
+java -jar target/quarkus-app/quarkus-run.jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+or on Windows
 
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./mvnw package -Pnative
+```sh
+mvn clean package
+java -jar target\quarkus-app\quarkus-run.jar
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./mvnw package -Pnative -Dquarkus.native.container-build=true
+### Compile and Run using Local Native Image
+Note that this requires GRAALVM_HOME to point to a valid GraalVM installation
+
+```sh
+mvn clean package -Pnative
 ```
 
-You can then execute your native executable with: `./target/currency-exchange-workflow-1.0.0-SNAPSHOT-runner`
+To run the generated native executable, generated in `target/`, execute
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
+```sh
+./target/currency-exchange-workflow-{version}-runner
+```
 
-## Related Guides
+### Submit a request
 
-- REST Client Classic ([guide](https://quarkus.io/guides/rest-client)): Call REST services
+The service based on the JSON workflow definition can be accessed by sending requests to the http://localhost:8080/currency-exchange-workflow url.
 
-## Provided Code
+Use the following curl command to create a new serverless workflow instance and get the results:
 
-### REST Client
 
-Invoke different services through REST with JSON
+```sh
+curl -X 'POST' \
+  'http://localhost:8080/currency_exchange_workflow' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "workflowdata": {
+           "currencyFrom": "EUR",
+           "currencyTo": "USD",
+           "exchangeDate": "2022-06-10",
+           "amount": 2.0
+       }
+    }'
+```
 
-[Related guide section...](https://quarkus.io/guides/rest-client)
+### Swagger UI
+
+The swagger is also available in the following url: http://localhost:8080/q/swagger-ui
