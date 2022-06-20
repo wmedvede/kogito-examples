@@ -34,8 +34,8 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                                 type = SecuritySchemeType.OAUTH2,
                                 flows = @OAuthFlows(
                                         clientCredentials = @OAuthFlow(
-                                                authorizationUrl = "https://example.com/oauth",
-                                                tokenUrl = "https://example.com/oauth/token",
+                                                authorizationUrl = "http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth",
+                                                tokenUrl = "http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token",
                                                 scopes = {})))
 
                 }))
