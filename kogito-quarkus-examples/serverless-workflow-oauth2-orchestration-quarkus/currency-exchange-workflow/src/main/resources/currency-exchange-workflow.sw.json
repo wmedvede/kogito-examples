@@ -3,18 +3,12 @@
   "version": "1.0",
   "name": "Currency Exchange SW",
   "dataInputSchema": "currency-exchange-workflow-schema.json",
-  "start": "ValidateAndInitialize",
-  "errors": [
-    {
-      "name": "service_error",
-      "code": "java.lang.Exception"
-    }
-  ],
+  "start": "ValidateInputs",
   "functions": [
     {
-      "name": "validateAndInitialize",
+      "name": "validateInputs",
       "type": "custom",
-      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateAndInitialize"
+      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs"
     },
     {
       "name": "getExchangeRateFromService",
@@ -27,15 +21,21 @@
       "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::calculateExchange"
     }
   ],
+  "errors": [
+    {
+      "name": "service_error",
+      "code": "java.lang.Exception"
+    }
+  ],
   "states": [
     {
-      "name": "ValidateAndInitialize",
+      "name": "ValidateInputs",
       "type": "operation",
       "actions": [
         {
-          "name": "validateAndInitializeAction",
+          "name": "validateInputsAction",
           "functionRef": {
-            "refName": "validateAndInitialize",
+            "refName": "validateInputs",
             "arguments": {
               "currencyFrom": "${ .currencyFrom }",
               "currencyTo": "${ .currencyTo }",
@@ -45,23 +45,19 @@
           }
         }
       ],
-      "transition": "CheckValidateAndInitialize"
+      "transition": "CheckValidation"
     },
     {
-      "name": "CheckValidateAndInitialize",
+      "name": "CheckValidation",
       "type": "switch",
       "dataConditions": [
         {
           "condition": "${ .executionStatus == \"ERROR\" }",
           "end": true
-        },
-        {
-          "condition": "${ .executionStatus == null and .exchangeRate == null }",
-          "transition": "GetExchangeRateFromService"
         }
       ],
       "defaultCondition": {
-        "transition": "CalculateExchange"
+        "transition": "GetExchangeRateFromService"
       }
     },
     {

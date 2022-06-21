@@ -23,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +37,11 @@ public class ExchangeWorkflowHelper {
 
     private static final Set<String> SUPPORTED_CURRENCIES = new LinkedHashSet<>(Arrays.asList("EUR", "USD", "JPY", "GBP", "CAD", "BRL", "AUD"));
 
-    @Inject
-    ExchangeRateCache exchangeRateCache;
-
     /**
      * Performs the validation of the parameters received by the serverless workflow and tries to get the exchange rate
      * from the cache to optimize and minimize the invocations to the Acme Financial Service.
      */
-    public ValidateAndInitializeResult validateAndInitialize(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
+    public ValidationResult validateInputs(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
         LOGGER.debug("validateAndInitialize, currencyFrom: {}, currencyTo: {}, amount: {}, exchangeDate: {}",
                 currencyFrom, currencyTo, amount, exchangeDate);
         try {
@@ -53,19 +49,14 @@ public class ExchangeWorkflowHelper {
             validateCurrency("currencyFrom", currencyFrom);
             validateCurrency("currencyTo", currencyTo);
         } catch (ValidationException e) {
-            return new ValidateAndInitializeResult("ERROR", e.getMessage());
+            return new ValidationResult("ERROR", e.getMessage());
         }
-        Double exchangeRate = exchangeRateCache.getRate(currencyFrom, currencyTo, LocalDate.parse(exchangeDate));
-        if (exchangeRate != null) {
-            LOGGER.debug("Optimization!, the exchangeRate: {} was read from the cache", exchangeRate);
-        }
-        return new ValidateAndInitializeResult(exchangeRate);
+        return new ValidationResult();
     }
 
     public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, String exchangeDate, Double amount, Double exchangeRate) {
         LOGGER.debug("calculateExchange, currencyFrom: {}, currencyTo: {}, exchangeDate: {}, amount: {}, exchangeRate: {}",
-                currencyFrom, currencyTo, exchangeDate, amount, exchangeRateCache);
-        exchangeRateCache.pushRate(currencyFrom, currencyTo, LocalDate.parse(exchangeDate), exchangeRate);
+                currencyFrom, currencyTo, exchangeDate, amount, exchangeRate);
         return new ExchangeResult(amount * exchangeRate);
     }
 

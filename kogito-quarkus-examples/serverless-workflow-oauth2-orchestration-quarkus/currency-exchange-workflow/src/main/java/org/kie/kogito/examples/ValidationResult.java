@@ -16,19 +16,17 @@
 
 package org.kie.kogito.examples;
 
-public class ValidateAndInitializeResult {
+public class ValidationResult {
 
     private String executionStatus;
     private String executionStatusMessage;
-    private Double exchangeRate;
 
-    public ValidateAndInitializeResult(String executionStatus, String executionStatusMessage) {
-        this.executionStatus = executionStatus;
-        this.executionStatusMessage = executionStatusMessage;
+    public ValidationResult() {
     }
 
-    public ValidateAndInitializeResult(Double exchangeRate) {
-        this.exchangeRate = exchangeRate;
+    public ValidationResult(String executionStatus, String executionStatusMessage) {
+        this.executionStatus = executionStatus;
+        this.executionStatusMessage = executionStatusMessage;
     }
 
     public String getExecutionStatus() {
@@ -37,9 +35,5 @@ public class ValidateAndInitializeResult {
 
     public String getExecutionStatusMessage() {
         return executionStatusMessage;
-    }
-
-    public Double getExchangeRate() {
-        return exchangeRate;
     }
 }
