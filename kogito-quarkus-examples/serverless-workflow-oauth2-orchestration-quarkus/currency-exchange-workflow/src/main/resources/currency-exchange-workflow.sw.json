@@ -11,14 +11,14 @@
       "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::validateInputs"
     },
     {
-      "name": "getExchangeRateFromService",
+      "name": "getExchangeRate",
       "type": "rest",
       "operation": "specs/acme-financial-service.yml#exchangeRate"
     },
     {
       "name": "calculateExchange",
-      "type": "custom",
-      "operation": "service:org.kie.kogito.examples.ExchangeWorkflowHelper::calculateExchange"
+      "type": "expression",
+      "operation": "{ calculateExchangeResult: .amount * .exchangeRate }"
     }
   ],
   "errors": [
@@ -57,22 +57,25 @@
         }
       ],
       "defaultCondition": {
-        "transition": "GetExchangeRateFromService"
+        "transition": "GetExchangeRate"
       }
     },
     {
-      "name": "GetExchangeRateFromService",
+      "name": "GetExchangeRate",
       "type": "operation",
       "actions": [
         {
-          "name": "getExchangeRateFromServiceAction",
+          "name": "getExchangeRateAction",
           "functionRef": {
-            "refName": "getExchangeRateFromService",
+            "refName": "getExchangeRate",
             "arguments": {
               "currencyFrom": "${ .currencyFrom }",
               "currencyTo": "${ .currencyTo }",
               "exchangeDate": "${ .exchangeDate }"
             }
+          },
+          "actionDataFilter": {
+            "results": "${ {exchangeRate: .rate} }"
           }
         }
       ],
@@ -91,18 +94,10 @@
         {
           "name": "calculateExchangeAction",
           "functionRef": {
-            "refName": "calculateExchange",
-            "arguments": {
-              "currencyFrom": "${ .currencyFrom }",
-              "currencyTo": "${ .currencyTo }",
-              "exchangeDate": "${ .exchangeDate }",
-              "amount": "${ .amount }",
-              "exchangeRate": "${ .exchangeRate }"
-            }
+            "refName": "calculateExchange"
           },
           "actionDataFilter": {
-            "results": "${ .value }",
-            "toStateData": "${ .result }"
+            "results": "${ {result: .calculateExchangeResult} }"
           }
         }
       ],

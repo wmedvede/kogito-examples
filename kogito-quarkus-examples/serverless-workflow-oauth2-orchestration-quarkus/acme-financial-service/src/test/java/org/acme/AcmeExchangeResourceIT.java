@@ -41,7 +41,7 @@ class AcmeExchangeResourceIT {
     @MethodSource("testParams")
     void exchangeRate(String currencyFrom, String currencyTo, String exchangeDate, String expectedRate) {
         // execute the query and check the result.
-        String expectedResponse = "{\"exchangeRate\":" + expectedRate + "}";
+        String expectedResponse = "{\"rate\":" + expectedRate + "}";
         String response = given()
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)

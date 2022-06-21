@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 /**
  * Emulates the Acme Financial Services database, implementation and maintenance for this DB
- * is out of scope of this example :(.
+ * is out of scope of this example.
  */
 @ApplicationScoped
 public class ExchangeRatesDB {
@@ -67,6 +67,9 @@ public class ExchangeRatesDB {
         EURO_TO_OTHERS_EXCHANGE_RATES.put("ZAR", 16.5209);
     }
 
+    /**
+     * @return never null.
+     */
     public Double readExchangeRate(String currencyFrom, String currencyTo, String exchangeDate) {
         Double euroToCurrencyFrom = EURO_TO_OTHERS_EXCHANGE_RATES.get(currencyFrom);
         if (euroToCurrencyFrom == null) {

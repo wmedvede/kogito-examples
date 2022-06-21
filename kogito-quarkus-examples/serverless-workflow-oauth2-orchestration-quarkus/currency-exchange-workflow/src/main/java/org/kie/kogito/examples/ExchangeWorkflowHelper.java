@@ -35,11 +35,13 @@ public class ExchangeWorkflowHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeWorkflowHelper.class);
 
-    private static final Set<String> SUPPORTED_CURRENCIES = new LinkedHashSet<>(Arrays.asList("EUR", "USD", "JPY", "GBP", "CAD", "BRL", "AUD"));
+    /**
+     * Naive implementation to show business related validations.
+     */
+    private static final Set<String> SUPPORTED_CURRENCIES_DB = new LinkedHashSet<>(Arrays.asList("EUR", "USD", "JPY", "GBP", "CAD", "BRL", "AUD"));
 
     /**
-     * Performs the validation of the parameters received by the serverless workflow and tries to get the exchange rate
-     * from the cache to optimize and minimize the invocations to the Acme Financial Service.
+     * Performs the validation of the parameters received by the serverless workflow.
      */
     public ValidationResult validateInputs(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
         LOGGER.debug("validateAndInitialize, currencyFrom: {}, currencyTo: {}, amount: {}, exchangeDate: {}",
@@ -52,12 +54,6 @@ public class ExchangeWorkflowHelper {
             return new ValidationResult("ERROR", e.getMessage());
         }
         return new ValidationResult();
-    }
-
-    public ExchangeResult calculateExchange(String currencyFrom, String currencyTo, String exchangeDate, Double amount, Double exchangeRate) {
-        LOGGER.debug("calculateExchange, currencyFrom: {}, currencyTo: {}, exchangeDate: {}, amount: {}, exchangeRate: {}",
-                currencyFrom, currencyTo, exchangeDate, amount, exchangeRate);
-        return new ExchangeResult(amount * exchangeRate);
     }
 
     private static void validateExchangeDate(String exchangeDate) throws ValidationException {
@@ -74,8 +70,8 @@ public class ExchangeWorkflowHelper {
     }
 
     private static void validateCurrency(String paramName, String currency) throws ValidationException {
-        if (!SUPPORTED_CURRENCIES.contains(currency)) {
-            throw new ValidationException("Invalid " + paramName + ": " + currency + ", only the following currencies are supported " + SUPPORTED_CURRENCIES);
+        if (!SUPPORTED_CURRENCIES_DB.contains(currency)) {
+            throw new ValidationException("Invalid " + paramName + ": " + currency + ", only the following currencies are supported " + SUPPORTED_CURRENCIES_DB);
         }
     }
 

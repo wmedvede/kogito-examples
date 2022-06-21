@@ -46,12 +46,12 @@ public class AcmeFinancialResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "exchangeRate")
     @SecurityRequirement(name = "acme-financial-oauth")
-    public AcmeExchangeResult getExchangeRate(@QueryParam("currencyFrom") String currencyFrom,
+    public ExchangeRateResult getExchangeRate(@QueryParam("currencyFrom") String currencyFrom,
             @QueryParam("currencyTo") String currencyTo,
             @QueryParam("exchangeDate") String exchangeDate) {
         LOGGER.debug("getExchangeRate, accessedBy: {}, currencyFrom: {}, currencyTo: {}, exchangeDate: {}",
                 identity.getPrincipal().getName(), currencyFrom, currencyTo, exchangeDate);
         Double exchangeRate = exchangeRatesDB.readExchangeRate(currencyFrom, currencyTo, exchangeDate);
-        return new AcmeExchangeResult(exchangeRate);
+        return new ExchangeRateResult(exchangeRate);
     }
 }

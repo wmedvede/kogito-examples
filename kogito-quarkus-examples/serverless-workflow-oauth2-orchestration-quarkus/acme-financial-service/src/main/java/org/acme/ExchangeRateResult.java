@@ -16,22 +16,22 @@
 
 package org.acme;
 
-public class AcmeExchangeResult {
+public class ExchangeRateResult {
 
-    private double exchangeRate;
+    private double rate;
 
-    public AcmeExchangeResult() {
+    public ExchangeRateResult() {
     }
 
-    public AcmeExchangeResult(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
+    public ExchangeRateResult(double rate) {
+        this.rate = rate;
     }
 
-    public double getExchangeRate() {
-        return exchangeRate;
+    public double getRate() {
+        return rate;
     }
 
-    public void setExchangeRate(double exchangeRate) {
-        this.exchangeRate = exchangeRate;
+    public void setRate(double rate) {
+        this.rate = rate;
     }
 }

@@ -28,15 +28,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AcmeExchangeResult'
+                $ref: '#/components/schemas/ExchangeRateResult'
       security:
-        - acme-financial-oauth: []
+        - acme-financial-oauth: [ ]
 components:
   schemas:
-    AcmeExchangeResult:
+    ExchangeRateResult:
       type: object
       properties:
-        exchangeRate:
+        rate:
           format: double
           type: number
   securitySchemes:
@@ -44,6 +44,6 @@ components:
       type: oauth2
       flows:
         clientCredentials:
-          authorizationUrl: https://example.com/oauth
-          tokenUrl: https://example.com/oauth/token
-          scopes: {}
+          authorizationUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token
+          scopes: { }
