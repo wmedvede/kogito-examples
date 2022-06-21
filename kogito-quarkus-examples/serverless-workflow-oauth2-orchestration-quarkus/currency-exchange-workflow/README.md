@@ -3,7 +3,7 @@
 ## Description
 
 This project contains a [serverless workflow](src/main/resources/currency-exchange-workflow.sw.json) and some auxiliary resources that implement the **Currency Exchange Workflow**
-described in the [servlerless-workflow-oauth2-orchestration-quarkus/README.md](../README.md). Please read it before to continue.
+described in the [serverless-workflow-oauth2-orchestration-quarkus/README.md](../README.md). Please read it before to continue.
 
 The service is described using JSON format as defined in the
 [CNCF Serverless Workflow specification](https://github.com/serverlessworkflow/specification).
@@ -12,20 +12,20 @@ The service is described using JSON format as defined in the
 
 ### Keycloak
 
-This example requires a Keycloak server to be running, and expects it to be listening on the port XXXX and localhost.
+This example requires a Keycloak server to be running, and expects it to be listening on the port 8281 and localhost.
 
-TODO
+* Run the Keycloak server
 
-* Install Keycloak
-
-Optionally and for convenience, a docker-compose [configuration file](../docker-compose/docker-compose.yml) is
-provided in the path [../docker-compose](../docker-compose), where you can just run the command from there:
+In a new terminal, go to the `serverless-workflow-oauth2-orchestration-quarkus/scripts` directory and execute:
 
 ```sh
-docker-compose up
+$ cd serverless-workflow-oauth2-orchestration-quarkus/scripts
+
+$ ./startKeycloak.sh
 ```  
 
-In this way, a container for Keycloak will be started on port TODO.
+In this way, a container for Keycloak will be started on port 8281.
+You can navigate to this URL [Keycloak console](http://localhost:8281/auth) to check that the server is running. 
 
 ## Installing and Running
 

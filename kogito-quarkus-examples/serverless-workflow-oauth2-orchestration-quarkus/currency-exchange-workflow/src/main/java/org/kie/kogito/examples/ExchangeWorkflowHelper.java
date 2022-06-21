@@ -36,12 +36,13 @@ public class ExchangeWorkflowHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExchangeWorkflowHelper.class);
 
     /**
-     * Naive implementation to show business related validations.
+     * Naive DB implementation to emulate business related validations.
+     * Only the currencies defined in the DB are managed by the Currency Exchange Workflow.
      */
     private static final Set<String> SUPPORTED_CURRENCIES_DB = new LinkedHashSet<>(Arrays.asList("EUR", "USD", "JPY", "GBP", "CAD", "BRL", "AUD"));
 
     /**
-     * Performs the validation of the parameters received by the serverless workflow.
+     * Performs the validation of the parameters received by the Currency Exchange Workflow.
      */
     public ValidationResult validateInputs(String currencyFrom, String currencyTo, double amount, String exchangeDate) {
         LOGGER.debug("validateAndInitialize, currencyFrom: {}, currencyTo: {}, amount: {}, exchangeDate: {}",

@@ -2,18 +2,17 @@
 
 ## Description
 
-This project contains a simple quarkus application that implements the external Acme Financial Service referred in [serverless-workflow-oauth2-orchestration-quarkus/README.md](../README.md)
-and where the queries are resolved. Please read it before to continue.
+This project contains a simple quarkus application that implements the `Acme Financial Service` referred in [serverless-workflow-oauth2-orchestration-quarkus/README.md](../README.md)
 
 ## Infrastructure requirements
 
-The same infrastructure requirements as described in [Currency Exchange Workflow](../currency-exchange-workflow/README.md#infrastructure-requirements) apply for this service.
+The same infrastructure requirements as described in [Currency Exchange Workflow](../currency-exchange-workflow/README.md#infrastructure-requirements).
 
 ## Installing and Running
 
 ### Prerequisites
 
-The same prerequisites as described in [Currency Exchange Workflow](../currency-exchange-workflow/README.md#prerequisites) apply for this service.
+The same prerequisites as described in [Currency Exchange Workflow](../currency-exchange-workflow/README.md#prerequisites).
 
 ### Compile and Run in Local Dev Mode
 

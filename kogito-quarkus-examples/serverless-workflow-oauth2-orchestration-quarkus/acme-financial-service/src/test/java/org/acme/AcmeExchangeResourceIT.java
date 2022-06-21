@@ -40,7 +40,7 @@ class AcmeExchangeResourceIT {
     @ParameterizedTest()
     @MethodSource("testParams")
     void exchangeRate(String currencyFrom, String currencyTo, String exchangeDate, String expectedRate) {
-        // execute the query and check the result.
+        // execute the exchange-rate query and check the result.
         String expectedResponse = "{\"rate\":" + expectedRate + "}";
         String response = given()
                 .contentType(ContentType.JSON)

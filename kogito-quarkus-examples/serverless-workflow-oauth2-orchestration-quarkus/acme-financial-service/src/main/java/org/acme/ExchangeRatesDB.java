@@ -22,8 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
 /**
- * Emulates the Acme Financial Services database, implementation and maintenance for this DB
- * is out of scope of this example.
+ * Emulates the Acme Financial Services database, implementation and maintenance of this DB
+ * is out of the scope of this example.
  */
 @ApplicationScoped
 public class ExchangeRatesDB {

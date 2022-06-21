@@ -24,6 +24,10 @@ import org.eclipse.microprofile.openapi.annotations.security.OAuthFlow;
 import org.eclipse.microprofile.openapi.annotations.security.OAuthFlows;
 import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 
+/**
+ * Defines OpenAPI configurations for the Quarkus application, for more information you must see
+ * <a href="https://quarkus.io/guides/openapi-swaggerui>Using OpenAPI and Swagger UI</a>
+ */
 @OpenAPIDefinition(
         info = @Info(
                 title = "Acme Financial Service API",
@@ -37,7 +41,6 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                                                 authorizationUrl = "http://localhost:8281/auth/realms/kogito/protocol/openid-connect/auth",
                                                 tokenUrl = "http://localhost:8281/auth/realms/kogito/protocol/openid-connect/token",
                                                 scopes = {})))
-
                 }))
 public class AcmeFinancialApplication extends javax.ws.rs.core.Application {
 

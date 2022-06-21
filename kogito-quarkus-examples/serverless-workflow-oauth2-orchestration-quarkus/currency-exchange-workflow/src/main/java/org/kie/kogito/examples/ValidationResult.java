@@ -16,6 +16,9 @@
 
 package org.kie.kogito.examples;
 
+/**
+ * Used to return the validation results to the Currency Exchange Workflow.
+ */
 public class ValidationResult {
 
     private String executionStatus;
