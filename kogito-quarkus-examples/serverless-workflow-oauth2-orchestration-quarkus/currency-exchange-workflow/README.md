@@ -95,7 +95,3 @@ curl -X 'POST' \
        }
     }'
 ```
-
-### Swagger UI
-
-The swagger is also available in the following url: http://localhost:8080/q/swagger-ui
