@@ -89,6 +89,8 @@ spec:
               value: -Dquarkus.hibernate-orm.database.generation=update
             - name: KOGITO_DATA_INDEX_QUARKUS_PROFILE
               value: "http-events-support"
+            - name: QUARKUS_PROFILE
+              value: "http-events-support"
             - name: QUARKUS_LOG_CONSOLE_ENABLE
               value: "true"
             - name: QUARKUS_LOG_CONSOLE_ENABLE
