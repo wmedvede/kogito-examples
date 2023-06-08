@@ -245,5 +245,17 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>default-connectors</id>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.kie.kogito</groupId>
+          <artifactId>kogito-addons-quarkus-knative-eventing</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>
