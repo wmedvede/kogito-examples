@@ -1,6 +1,5 @@
 package org.kie.kogito.examples;
 
-
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.ws.rs.Consumes;
@@ -15,14 +14,15 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.kie.kogito.examples.CallbackStateTimeoutsClient.ID;
+import static org.kie.kogito.examples.CallbackStateTimeoutsClient.CONFIG_KEY;
 
 @Path("/")
-@RegisterRestClient(configKey = ID)
+@RegisterRestClient(configKey = CONFIG_KEY)
 public interface CallbackStateTimeoutsClient extends WorkflowClient {
 
     String ID = "callbackstatetimeouts";
     String URI = "/" + ID;
+    String CONFIG_KEY = "callback_state_timeouts";
 
     @POST
     @Path(URI)

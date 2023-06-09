@@ -8,14 +8,15 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.kie.kogito.examples.EventStateTimeoutsClient.ID;
+import static org.kie.kogito.examples.EventStateTimeoutsClient.CONFIG_KEY;
 
 @Path("/")
-@RegisterRestClient(configKey = ID)
+@RegisterRestClient(configKey = CONFIG_KEY)
 public interface EventStateTimeoutsClient extends WorkflowClient {
 
     String ID = "event_state_timeouts";
     String URI = "/" + ID;
+    String CONFIG_KEY = "event_state_timeouts";
 
     @POST
     @Path(URI)

@@ -8,14 +8,15 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.kie.kogito.examples.SwitchStateTimeoutsClient.ID;
+import static org.kie.kogito.examples.SwitchStateTimeoutsClient.CONFIG_KEY;
 
 @Path("/")
-@RegisterRestClient(configKey = ID)
+@RegisterRestClient(configKey = CONFIG_KEY)
 public interface SwitchStateTimeoutsClient extends WorkflowClient {
 
     String ID = "switch_state_timeouts";
     String URI = "/" + ID;
+    String CONFIG_KEY = "switch_state_timeouts";
 
     @POST
     @Path(URI)
