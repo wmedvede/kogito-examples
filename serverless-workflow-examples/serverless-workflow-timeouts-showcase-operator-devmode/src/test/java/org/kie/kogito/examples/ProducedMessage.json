@@ -1,0 +1,144 @@
+{
+  "id": "6c19d761-5e66-4c59-9cbc-765544ea79ff",
+  "source": "http://localhost:8080/switch_state_timeouts",
+  "type": "ProcessInstanceEvent",
+  "time": "2023-05-15T11:38:33.517596+02:00",
+  "data": {
+    "id": "0c335792-bfcf-4d25-b985-75b39a631db0",
+    "version": "1.0",
+    "parentInstanceId": "",
+    "rootInstanceId": "",
+    "processId": "switch_state_timeouts",
+    "processType": null,
+    "rootProcessId": "",
+    "processName": "Switch State Timeouts Example",
+    "startDate": "2023-05-15T11:38:03.443+02:00",
+    "endDate": "2023-05-15T11:38:33.515+02:00",
+    "state": 2,
+    "businessKey": "",
+    "nodeInstances": [
+      {
+        "id": "2a665664-b4be-44e8-bdd5-c3269f848de7",
+        "nodeId": "21",
+        "nodeDefinitionId": "_jbpm-unique-29",
+        "nodeName": "visaApprovedEvent",
+        "nodeType": "EventNode",
+        "triggerTime": "2023-05-15T11:38:03.469+02:00",
+        "leaveTime": "2023-05-15T11:38:33.512+02:00"
+      },
+      {
+        "id": "9830e3f1-9134-4552-990b-b87fdfa8332f",
+        "nodeId": "24",
+        "nodeDefinitionId": "_jbpm-unique-31",
+        "nodeName": "visaDeniedEvent",
+        "nodeType": "EventNode",
+        "triggerTime": "2023-05-15T11:38:03.470+02:00",
+        "leaveTime": "2023-05-15T11:38:33.512+02:00"
+      },
+      {
+        "id": "5bbb75b6-d1aa-4769-90cf-a6386b7dfd43",
+        "nodeId": "2",
+        "nodeDefinitionId": "_jbpm-unique-13",
+        "nodeName": "End",
+        "nodeType": "EndNode",
+        "triggerTime": "2023-05-15T11:38:33.515+02:00",
+        "leaveTime": "2023-05-15T11:38:33.515+02:00"
+      },
+      {
+        "id": "f92aedb6-8096-4a05-8e2e-33817e74b414",
+        "nodeId": "13",
+        "nodeDefinitionId": "_jbpm-unique-23",
+        "nodeName": "PrintExitMessage",
+        "nodeType": "CompositeContextNode",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.515+02:00"
+      },
+      {
+        "id": "c71d3e83-494c-4abf-bb51-ecc73d5f568e",
+        "nodeId": "18",
+        "nodeDefinitionId": "_jbpm-unique-27",
+        "nodeName": "EmbeddedEnd",
+        "nodeType": "EndNode",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.514+02:00"
+      },
+      {
+        "id": "f850f4bf-0af4-4281-a1a0-8b7256ae0ee8",
+        "nodeId": "17",
+        "nodeDefinitionId": "_jbpm-unique-26",
+        "nodeName": "Script",
+        "nodeType": "ActionNode",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.514+02:00"
+      },
+      {
+        "id": "18e7d3f1-b1e7-42f1-8b70-6b25d1960974",
+        "nodeId": "16",
+        "nodeDefinitionId": "_jbpm-unique-25",
+        "nodeName": "systemOut",
+        "nodeType": "ActionNode",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.514+02:00"
+      },
+      {
+        "id": "089bd044-841b-42f9-87bc-061286e872ea",
+        "nodeId": "14",
+        "nodeDefinitionId": "_jbpm-unique-24",
+        "nodeName": "EmbeddedStart",
+        "nodeType": "StartNode",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.514+02:00"
+      },
+      {
+        "id": "3e333a51-959c-4c42-b1c7-ad244efa2d7b",
+        "nodeId": "26",
+        "nodeDefinitionId": "_jbpm-unique-33",
+        "nodeName": "Join-PrintExitMessage",
+        "nodeType": "Join",
+        "triggerTime": "2023-05-15T11:38:33.514+02:00",
+        "leaveTime": "2023-05-15T11:38:33.514+02:00"
+      },
+      {
+        "id": "bb68886e-87e3-4b31-9176-0b8648b9f8e2",
+        "nodeId": "12",
+        "nodeDefinitionId": "_jbpm-unique-22",
+        "nodeName": "HandleNoVisaDecision",
+        "nodeType": "ActionNode",
+        "triggerTime": "2023-05-15T11:38:33.512+02:00",
+        "leaveTime": "2023-05-15T11:38:33.513+02:00"
+      },
+      {
+        "id": "bd27bc81-ba69-4bcc-a883-5f612e246d3d",
+        "nodeId": "19",
+        "nodeDefinitionId": "19",
+        "nodeName": "TimerNode_19",
+        "nodeType": "TimerNode",
+        "triggerTime": "2023-05-15T11:38:03.470+02:00",
+        "leaveTime": "2023-05-15T11:38:33.512+02:00"
+      }
+    ],
+    "variables": {
+      "workflowdata": {
+        "exitMessage": "No decision was made. The switch state did not receive any event, and the timeout has overdue."
+      }
+    },
+    "error": null,
+    "roles": null,
+    "milestones": []
+  },
+  "specversion": "1.0",
+  "datacontenttype": "application/json",
+  "kogitoprocinstanceid": "0c335792-bfcf-4d25-b985-75b39a631db0",
+  "kogitoprocid": "switch_state_timeouts",
+  "kogitoaddons": "process-svg,cloudevents,kubernetes,knative-eventing,jobs-management,source-files,jdbc-persistence",
+  "kogitoprocversion": "1.0",
+  "kogitoprocist": "2",
+  "kogitorootprocid": "",
+  "kogitoparentprociid": "",
+  "kogitoprocinstanceid": "0c335792-bfcf-4d25-b985-75b39a631db0",
+  "kogitoprocist": "2",
+  "kogitoprocversion": "1.0",
+  "kogitorootprociid": "",
+  "kogitoprocid": "switch_state_timeouts",
+  "kogitoaddons": "process-svg,cloudevents,kubernetes,knative-eventing,jobs-management,source-files,jdbc-persistence"
+}
