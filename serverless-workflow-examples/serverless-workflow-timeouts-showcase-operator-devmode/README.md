@@ -1,37 +1,58 @@
 ### Preparing your environment
 
 1. Install [minikube](https://minikube.sigs.k8s.io/docs/start/)
-2. Install Knative using the [quickstarts](https://knative.dev/docs/getting-started/) since a DNS will be configured for you.
 
-> **NOTE:** Every time you restart your minikube installation, you must activate the knative profile, and be sure that you have enabled the minikube tunnel for this profile after minikube has started.
-> You can do this by executing these commands:
-> ```shell
-> minikube start -p knative
-> minikube tunnel -p knative
-> ```
+2. Start your minikube with the following command:
+
+```shell
+minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
+```
+
+> **NOTE:** If the number of allocated cpus, and memory configurations, don't feet well for your installation you can try to change this numbers.
 
 ### Building the project
 
-Once the minikube environment is running, open a terminal window, go to the serverless-workflow-timeouts-showcase-embedded directory, and execute these commands to be sure the generated images are stored in the minikube internal registry. 
+Once the minikube environment is running, open a terminal window, go to the serverless-workflow-timeouts-showcase-operator-devmode directory, and execute these commands to be sure the UI generated image is stored in the minikube internal registry. 
 
 ```shell
-eval $(minikube -p knative docker-env)
+eval $(minikube -p minikube docker-env)
 
-mvn clean package -Pknative
+mvn clean package -Pkubernetes
 ```
 
-### Timeouts showcase service deployment
-
-To deploy the example workflows you must execute this command:
+### Create the namespace
 
 ```shell
-kubectl apply -f target/kubernetes/knative.yml
+# The namespace name is very important to ensure all the services that compose the showcase can interact.
+kubectl create ns timeouts-showcase
+```
+ 
+### Timeouts showcase services deployment
 
-# After executing the commands you will see an output like this:
+To deploy the example workflows you must execute these commands:
 
-service.serving.knative.dev/timeouts-showcase-embedded created
-rolebinding.rbac.authorization.k8s.io/timeouts-showcase-embedded-view unchanged
-serviceaccount/timeouts-showcase-embedded configured
+```shell
+kubectl apply -f workflows/callback_state_timeouts_devmode.yaml -n timeouts-showcase
+
+# After executing the command you will see an output like this:
+
+TODO
+```
+
+```shell
+kubectl apply -f workflows/event_state_timeouts_devmode.yaml -n timeouts-showcase
+
+# After executing the command you will see an output like this:
+
+TODO
+```
+
+```shell
+kubectl apply -f workflows/switch_state_timeouts_devmode.yaml -n timeouts-showcase
+
+# After executing the command you will see an output like this:
+
+TODO
 ```
 
 To get the URL to access the service you can execute this command:

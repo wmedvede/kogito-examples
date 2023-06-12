@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2023 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,9 @@ import java.util.UUID;
 
 /**
  * Helper resource with convenient operations to produce events for the serverless workflows that are waiting for
- * events to arrive.
+ * events to arrive. The UI relies on these invocations, and thus we keep it simple. Analogous to the
+ * WorkflowsProxyResource this class relies on the quarkus-rest-client extension the to do the formal invocation and
+ * sending of the events to the SWs.
  */
 @Path("events-producer")
 @ApplicationScoped
@@ -156,6 +158,7 @@ public class EventsProducerResource {
 
     private static Response produceResponse(Response response) {
         if (response.getStatus() == 202) {
+            //client side ajax expect code 200.
             return Response.ok().entity("{}").build();
         }
         return response;

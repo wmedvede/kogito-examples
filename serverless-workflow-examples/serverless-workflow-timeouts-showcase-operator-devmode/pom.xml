@@ -183,7 +183,7 @@
         <!-- Quarkus Kubernetes integration to build and deploy -->
         <quarkus.kubernetes.namespace>${namespace}</quarkus.kubernetes.namespace>
         <quarkus.kubernetes.deploy>${deploy}</quarkus.kubernetes.deploy>
-        <!--quarkus.profile>kubernetes</quarkus.profile-->
+        <quarkus.profile>kubernetes</quarkus.profile>
       </properties>
       <dependencies>
         <dependency>
