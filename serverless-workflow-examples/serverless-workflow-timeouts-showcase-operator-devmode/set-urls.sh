@@ -1,8 +1,8 @@
 #!/bin/bash
 
-CALLBACK_STATE_TIMEOUTS_WF=switchstatetimeouts
+CALLBACK_STATE_TIMEOUTS_WF=callbackstatetimeouts
 EVENT_STATE_TIMEOUTS_WF=eventstatetimeouts
-SWITCH_STATE_TIMEOUTS_WF=eventstatetimeouts
+SWITCH_STATE_TIMEOUTS_WF=switchstatetimeouts
 
 CALLBACK_STATE_TIMEOUTS_URL=`minikube service $CALLBACK_STATE_TIMEOUTS_WF -n timeouts-showcase  --url`
 EVENT_STATE_TIMEOUTS_URL=`minikube service $EVENT_STATE_TIMEOUTS_WF -n timeouts-showcase  --url`
