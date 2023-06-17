@@ -8,78 +8,103 @@
 minikube start --cpus 4 --memory 4096 --addons registry --addons metrics-server --insecure-registry "10.0.0.0/24" --insecure-registry "localhost:5000"
 ```
 
-> **NOTE:** If the number of allocated cpus, and memory configurations, don't feet well for your installation you can try to change this numbers.
+> **NOTE:** If the number of allocated cpus and memory configurations, don't feet well for your installation you can try to change this numbers.
 
-### Building the project
+3. Be sure the Kogito Serverless Operator is installed in your minikube according.
 
-Once the minikube environment is running, open a terminal window, go to the serverless-workflow-timeouts-showcase-operator-devmode directory, and execute these commands to be sure the UI generated image is stored in the minikube internal registry. 
+TODO link the SWs guides.
 
-```shell
-eval $(minikube -p minikube docker-env)
+### Deploying the workflows
 
-mvn clean package -Pkubernetes
-```
+Once the minikube environment is running, open a terminal window, go to the `serverless-workflow-timeouts-showcase-operator-devmode` directory, and execute these commands:
 
-### Create the namespace
+#### Create the namespace
 
 ```shell
 # The namespace name is very important to ensure all the services that compose the showcase can interact.
 kubectl create ns timeouts-showcase
 ```
- 
-### Timeouts showcase services deployment
 
-To deploy the example workflows you must execute these commands:
+> **NOTE:** In cases where you need to clean the deployed workflows, to start again, or simply release the 
+> resources on your minikube installation see: [Showcase cleaning](#showcase-cleaning)  
+> 
+
+#### Deploy the workflows
+
+To deploy the showcase workflows you must execute these commands:
 
 ```shell
 kubectl apply -f workflows/callback_state_timeouts_devmode.yaml -n timeouts-showcase
-
-# After executing the command you will see an output like this:
-
-TODO
 ```
 
 ```shell
 kubectl apply -f workflows/event_state_timeouts_devmode.yaml -n timeouts-showcase
-
-# After executing the command you will see an output like this:
-
-TODO
 ```
 
 ```shell
 kubectl apply -f workflows/switch_state_timeouts_devmode.yaml -n timeouts-showcase
-
-# After executing the command you will see an output like this:
-
-TODO
 ```
 
-To get the URL to access the service you can execute this command:
+After executing the commands you should have seen the following ouptputs:
+```shell
+kogitoserverlessworkflow.sw.kogito.kie.org/callbackstatetimeouts created
+kogitoserverlessworkflow.sw.kogito.kie.org/eventstatetimeouts created
+kogitoserverlessworkflow.sw.kogito.kie.org/switchstatetimeouts created
+```
+
+### Accessing the timeouts showcase workflows
+
+To get the URLs to access each workflow you must execute these commands:
 
 ```shell
-kn service list | grep timeouts-showcase-embedded
+minikube service callbackstatetimeouts -n timeouts-showcase  --url
 
-# After executing the command you will see an output like this:
-
-NAME                         URL                                                               LATEST                             AGE     CONDITIONS   READY   REASON
-timeouts-showcase-embedded   http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io   timeouts-showcase-embedded-00001   5m39s   3 OK / 3     True   
+# callback_sate_timeouts url output example
+http://192.168.49.2:32750
 ```
 
-Note that the output above might be different in your installation, and the IP numbers in the URL can be different.
+```shell
+minikube service eventstatetimeouts -n timeouts-showcase  --url
 
-### Executing the `switch_state_timeouts` workflow using curl
+# event_state_timeouts url output example
+http://192.168.49.2:31191
+```
 
-To execute the following commands you must use the http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io corresponding to your installation.
+```shell
+minikube service switchstatetimeouts -n timeouts-showcase  --url
+
+# switch_state_timeouts url output example
+http://192.168.49.2:31917
+```
+
+> **NOTE:** The outputs above might be different in your installation, and the IP numbers and ports can be change even when you delete and redeploy a particular workflow. 
+>
+> To facilitate the workflows executions, you can use the following command to define env variables with the corresponding urls.
+
+
+```shell
+source set-urls.sh
+
+# The execution of the script will produce an output like this:
+
+Setting workflows env variables to:
+CALLBACK_STATE_TIMEOUTS_URL=http://192.168.49.2:31917
+EVENT_STATE_TIMEOUTS_URL=http://192.168.49.2:31191
+SWITCH_STATE_TIMEOUTS_URL=http://192.168.49.2:31191
+```
+
+### Executing the workflows using curl
+
+To execute the `switch_state_timeouts` you must use the corresponding url obtained in the previous steps, or the env variable SWITCH_STATE_TIMEOUTS_URL: 
 
 Execute the following command to create a new `switch_state_timeouts` workflow instance:
 
 ```shell
-curl -X 'POST' \
-  'http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io/switch_state_timeouts' \
+ curl -X 'POST' \
+   "$SWITCH_STATE_TIMEOUTS_URL" \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
-  -d '{}'
+  -d '{}' 
 
 # The command will produce an output like this:
 
@@ -88,9 +113,9 @@ curl -X 'POST' \
 
 If you execute the following command during the first 30 seconds after the SW instance was created, you'll get the following results:
 ```shell
-curl -X 'GET' 'http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io/switch_state_timeouts'
+curl -X 'GET' "$SWITCH_STATE_TIMEOUTS_URL"
 
-# The command will produce an output like this, which indicates that the process is waiting for an event to arrive.
+# The command will produce an output like this, which indicates that the workflow instance is active and waiting for an event to arrive.
 
 [{"id":"2e8e1930-9bae-4d60-b364-6fbd61128f51","workflowdata":{}}]
 ```
@@ -102,23 +127,23 @@ result, which means that the SW has timed-out.
 []
 ```
 
-You can execute the following command to create a new `callback_state_timeouts` workflow instance:
+To execute the `callback_state_timeouts` workflow you must execute this command:
 
 ```shell
 curl -X 'POST' \
-  'http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io/callback_state_timeouts' \
+  "$CALLBACK_STATE_TIMEOUTS_URL" \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{}'
 ```
 
-Similar to `switch_state_timeouts` you can wait for 30+ seconds to check the SW was timed-out.
+Similar to the `switch_state_timeouts` you can wait for 30+ seconds to check the SW was timed-out.
 
 Finally, you can execute the following command to create a new `event_state_timeous` workflow instance:
 
 ```shell
 curl -X 'POST' \
-  'http://timeouts-showcase-embedded.default.10.98.134.49.sslip.io/event_state_timeouts' \
+  "$EVENT_STATE_TIMEOUTS_URL" \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -126,33 +151,77 @@ curl -X 'POST' \
 }'
 ```
 
-You can also verify the timeouts functioning following this procedure:
+You can also verify the timeouts functioning for particular workflow by looking at the log traces:
 ```shell
-kubectl get pod | grep timeouts-showcase-embedded
+kubectl get pods -n timeouts-showcase
 
-# The command above will produce an output like this, where timeouts-showcase-00001-deployment-56dcc74c77-jttv5 
+# The command above will produce an output like this, where you can see the corresponding pod for each workflow. 
 # corresponds to the Pod executing the service.
 
-timeouts-showcase-embedded-00001-deployment-7459776dc8-kndhd   2/2     Running   0          10m
+NAME                                     READY   STATUS    RESTARTS   AGE
+callbackstatetimeouts-58c9f5d8fb-xgnmm   1/1     Running   0          17m
+eventstatetimeouts-8564767bd5-c7zqc      1/1     Running   0          18m
+switchstatetimeouts-8775d4c69-7pjvc      1/1     Running   0          17m
+
 ```
 
-Finally, you can execute the following command to see the logs corresponding to that Pod. And see the log traces
-corresponding to the created and timed-out serverless workflow instance.
+Finally, you can execute the following command to see the logs corresponding to any of these Pods. And see the log traces
+corresponding to the created and timed-out workflow instance.
 
 ```shell
-kubectl logs timeouts-showcase-embedded-00001-deployment-7459776dc8-kndhd
+kubectl logs switchstatetimeouts-8775d4c69-7pjvc -n timeouts-showcase
 
 # The command will produce an output like this, where you'll find the log traces produced by the timeouts showcase workflow instances.
 
-switch-state-timeouts: 2e8e1930-9bae-4d60-b364-6fbd61128f51 has started.
-switch-state-timeouts: 2e8e1930-9bae-4d60-b364-6fbd61128f51 has finalized. No decision was made. The switch state did not receive any event, and the timeout has overdue.
+switchstatetimeouts: 2e8e1930-9bae-4d60-b364-6fbd61128f51 has started.
+switchstatetimeouts: 2e8e1930-9bae-4d60-b364-6fbd61128f51 has finalized. No decision was made. The switch state did not receive any event, and the timeout has overdue.
 ```
+
+### Operator dev mode tooling
+When you work with the Kogito Serverless Operator dev mode, every time you deploy a workflow, a set of tools will be automatically provisioned as part of the deployment procedure.
+These tools are designed to help you to test and work with your workflow when you are in the development phase of your project.
+
+> **NOTE:** Considering that the Operator deploys each workflow independently, to access the tooling you must use the particular url for the workflow you wants to access.   
+>
+
+#### Dev UI Main View
+
+For the `switch-state-timeouts`, the Quarkus Dev UI will be available at http://192.168.49.2:31917q/dev/ with the Serverless Workflow Tools.
+
+![](docs/DevUIGeneral.png)
+
+For more information about how to get the url for each workflow when you are working with minikube  See: [Accessing the timeouts showcase services](#accessing-the-timeouts-showcase-services)
+
+#### Dev UI Serverless Workflow Tools View
+
+![](docs/DevUIWorkflows.png)
+
 
 ### Timeouts showcase UI
 The timeouts showcase provides a simple UI that can be used to create workflow instances, and also send them the expected events.
 To execute the UI you must:
-1) Follow the steps described at the beginning of this document to get the timeouts showcase running
-2) Execute the following command to determine the URL of the timeouts showcase in your local environment:
+1) Follow the steps described at the beginning of this document to deploy the workflows.
+2) Execute the following commands to build and deploy the UI on the same namespace as your workflows.
+
+> **NOTE:** Remember that these last build steps, as well as the java code you see in this project, are only to provide 
+> the timeouts showcase UI. And, as you have seen in the previous steps, when you work with the kogito Serverless Operator dev mode
+> profile, the only that you need is the yaml files that defines the KogitoServerlessWorkflow resources. (see the `workflows` directory)
+>  
+> We recommend that you test the different workflows and actions one by one, at the same time that you query the timeouts showcase logs to verify the traces generated by the workflows.
+> Additionally, you can use the Kogito Development Mode Tooling to query and see the information that is generated for each workflow, etc.
+> And remember, even when the UI provides centralized access to your workflows, each workflow still runs isolated on its own container, and thus, is accessed with a different url.
+> See: [Accessing the timeouts showcase services](#accessing-the-timeouts-showcase-services)
+>
+
+Execute these commands to be sure the UI generated image is stored in the minikube internal registry:
+
+```shell
+eval $(minikube -p minikube docker-env)
+```
+```shell
+mvn clean package -Pkubernetes
+```
+
 
 ```shell
 kn service list 
@@ -192,28 +261,9 @@ In case of the url above: http://timeouts-showcase-embedded.default.10.98.134.49
 ![](docs/GraphqlUI.png)
 
 ### Showcase cleaning
-To remove the installed service from your minikube installation you can use the following command:
+To remove the installed workflows and UI from your minikube installation you can use the following command:
 
 ```shell
-kn service delete timeouts-showcase-embedded
+kubectl delete namespace timeouts-showcase
 ```
-
-### Compile and Run in Local Dev Mode
-
-To run the example in the Quarkus dev mode you must execute this command:
-
-```shell
-mvn clean package quarkus:dev
-```
-After this, the application will be available at http://localhost:8080
-
-Additionally, the Quarkus Dev UI will be available at http://localhost:8080/q/dev/ with the Serverless Workflow Tools.
-
-#### Dev UI Main View
-
-![](docs/DevUIGeneral.png)
-
-#### Dev UI Serverless Workflow Tools View
-
-![](docs/DevUIWorkflows.png)
 
