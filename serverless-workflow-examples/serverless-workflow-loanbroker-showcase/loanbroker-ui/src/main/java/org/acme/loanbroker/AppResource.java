@@ -69,6 +69,8 @@ public class AppResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response consumeQuotesEvent(CloudEvent cloudEvent) {
+
+        System.out.println("XXXX RECEIVED Cloud event: " + cloudEvent.getType());
         LOGGER.info("Received Cloud Event {}", cloudEvent);
         if (cloudEvent == null || cloudEvent.getData() == null) {
             return Response.status(400).entity("{ \"message\": \"CloudEvent without data\" }").build();

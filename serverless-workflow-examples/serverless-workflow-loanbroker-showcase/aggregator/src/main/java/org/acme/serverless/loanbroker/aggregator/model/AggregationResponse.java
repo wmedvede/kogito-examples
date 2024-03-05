@@ -39,6 +39,8 @@ public class AggregationResponse implements Serializable {
         response.setQuoteCount(
                 Integer.valueOf(exchange.getIn().getHeader(QuotesAggregationStrategy.HEADER_QUOTES_COUNT).toString()));
 
+        System.out.println("XXX fromExchange, Creating Aggregation Response: " + response);
+
         return response;
     }
 

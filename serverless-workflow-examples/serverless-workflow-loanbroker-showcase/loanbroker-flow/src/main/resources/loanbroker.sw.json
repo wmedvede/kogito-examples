@@ -75,7 +75,7 @@
       },
       "transition": "CheckRequestQuoteArrived",
       "timeouts": {
-        "eventTimeout": "PT10S"
+        "eventTimeout": "PT60S"
       }
     },
     {
