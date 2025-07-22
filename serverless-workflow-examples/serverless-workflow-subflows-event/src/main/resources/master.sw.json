@@ -14,53 +14,78 @@
       "name": "executeB",
       "source": "",
       "type": "executeB"
+    },
+    {
+      "name": "exitWorkflow",
+      "source": "",
+      "type": "exitWorkflow"
     }
   ],
   "states": [
     {
       "name": "setup",
-      "type" : "operation",
-      "actions": [{
-        "name": "setup",
-        "subFlowRef" : "setup"
-       }], 
-       "transition": "waitForEvents"  
-     }, 
-     {
-        "name": "waitForEvents",
-        "type": "event",
-         "onEvents": [
-         {
+      "type": "operation",
+      "actions": [
+        {
+          "name": "setup",
+          "subFlowRef": "setup",
+          "actionDataFilter": {
+            "useResults": true
+          }
+        }
+      ],
+      "transition": "waitForEvents"
+    },
+    {
+      "name": "waitForEvents",
+      "type": "event",
+      "onEvents": [
+        {
           "eventRefs": [
             "executeA"
           ],
-          "actions": [ 
-          {
-            "name": "workflowA",
-            "subFlowRef": "workflowA",
-            "actionDataFilter" : {
-              "useResults": false
+          "actions": [
+            {
+              "name": "workflowA",
+              "subFlowRef": "workflowA",
+              "actionDataFilter": {
+                "useResults": true
+              }
             }
-          }
           ]
         },
-        { 
-         "eventRefs": [
+        {
+          "eventRefs": [
             "executeB"
           ],
-          "actions": [ 
-          {
-            "name": "workflowB",
-            "subFlowRef": "workflowB",
-            "actionDataFilter" : {
-              "useResults": false
+          "actions": [
+            {
+              "name": "workflowB",
+              "subFlowRef": "workflowB",
+              "actionDataFilter": {
+                "useResults": true,
+                "results": ".param5",
+                "toStateData": ".workflowBData"
+              }
             }
-          }
           ]
         }
-       ],
-       "exclusive": false,
-       "end" : true 
-     }
+      ],
+      "exclusive": false,
+      "transition": "waitForExitWorkflow"
+    },
+    {
+      "name": "waitForExitWorkflow",
+      "type": "event",
+      "onEvents": [
+        {
+          "eventRefs": [
+            "exitWorkflow"
+          ]
+        }
+      ],
+      "exclusive": false,
+      "end": true
+    }
   ]
 }

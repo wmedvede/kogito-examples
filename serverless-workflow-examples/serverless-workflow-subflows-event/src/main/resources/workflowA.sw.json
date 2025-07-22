@@ -9,7 +9,7 @@
       "name": "doIt",
       "type": "inject",
       "data" :  {
-           "param3": "This is workflow A"
+           "param3": "This is workflow A param3"
       },
       "end": true
     }

@@ -9,8 +9,8 @@
       "name": "doIt",
       "type": "inject",
       "data" :  {
-           "param1": "This is param1",
-           "param2": "This is param2"
+           "param1": "setup -> This is param1",
+           "param2": "setup -> This is param2"
       },
       "end": true
     }
